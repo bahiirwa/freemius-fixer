@@ -217,7 +217,21 @@
 
         deactivate_plugins( plugin_basename( __FILE__ ) );
 
-        wp_die( __( 'Freemius records successfully cleared! You are now safe to activate any Freemius-powered plugin or theme.' ), __( 'Error' ) );
+        $plugins_url = admin_url( 'plugins.php' );
+	    $themes_url  = admin_url( 'themes.php' );
+
+	    if ( is_multisite() && is_network_admin() ) {
+		    $plugins_url = network_admin_url( 'plugins.php' );
+		    $themes_url  = network_admin_url( 'themes.php' );
+	    }
+
+	    wp_die(
+		    __(
+			    'Freemius records successfully cleared! You are now safe to activate any Freemius-powered'
+		    ) . ' <a href="' . esc_url( $plugins_url ) . '">' . __( 'plugin' ) . '</a> ' . __( 'or' ) .
+		    ' <a href="' . esc_url( $themes_url ) . '">' . __( 'theme' ) . '</a>.',
+		    __( 'Success' )
+	    );
     }
 
     add_action( 'activated_plugin', 'fs_cleanup_activation_redirect_to_settings_page' );
